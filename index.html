@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapador - временная страница</title>
+    <title>Rapador</title>
     <style>
         /* Общие стили */
         body {
@@ -152,14 +152,14 @@
     <div class="main-content">
         <div class="notice">
             <h2>Сайт находится на техническом обслуживании</h2>
-            <p>Мы работаем над улучшением нашего сервиса. Если вам срочно нужна помощь по вопросам кредитов или коллекторов, оставьте заявку - мы свяжемся с вами в ближайшее время.</p>
+            <p>Мы работаем над улучшением нашего сервиса. Если вам срочно нужна помощь по вопросам кредитов или коллекторов, оставьте заявку - мы свяжемся с вами в ближайшее время. Или напишите нам info@mai.ru</p>
             
             <button class="cta-button" id="open-modal">Отправить заявку</button>
         </div>
     </div>
     
     <footer>
-        <p>© 2023 Rapador. Все права защищены.</p>
+        <p>© 2025 Rapador. info@rapad.ru. </p>
     </footer>
     
     <!-- Модальное окно с формой -->
@@ -167,32 +167,42 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Оставить заявку</h2>
-            <form id="feedback-form" action="https://formsubmit.co/info@rapad.ru" method="POST">
+            <!-- 
+              Форма теперь использует FormCarry вместо FormSubmit
+              action содержит endpoint FormCarry с вашим уникальным ID формы
+              method остается POST
+            -->
+            <form id="feedback-form" action="https://formcarry.com/s/9BirDBoq6sn" method="POST">
+                <!-- 
+                  FormCarry поддерживает скрытые поля для настройки
+                  Здесь мы устанавливаем тему письма и перенаправление после отправки
+                -->
                 <input type="hidden" name="_subject" value="Новая заявка с временной страницы Rapador">
-                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_redirect" value="https://rapad.ru/thank-you.html">
                 
+                <!-- Поля формы остаются такими же, но могут быть переименованы для удобства -->
                 <div class="form-group">
                     <label for="name">Имя*</label>
-                    <input type="text" id="name" name="Имя" required minlength="2">
+                    <input type="text" id="name" name="name" required minlength="2">
                 </div>
                 
                 <div class="form-group">
                     <label for="phone">Телефон*</label>
-                    <input type="tel" id="phone" name="Телефон" required pattern="\+?[0-9\s\-\(\)]+">
+                    <input type="tel" id="phone" name="phone" required pattern="\+?[0-9\s\-\(\)]+">
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email*</label>
-                    <input type="email" id="email" name="Email" required>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="message">Опишите вашу проблему</label>
-                    <textarea id="message" name="Сообщение" rows="4"></textarea>
+                    <textarea id="message" name="message" rows="4"></textarea>
                 </div>
                 
                 <div class="checkbox">
-                    <input type="checkbox" id="consent" name="Согласие" required>
+                    <input type="checkbox" id="consent" name="consent" required>
                     <label for="consent">Я согласен на обработку персональных данных</label>
                 </div>
                 
@@ -217,6 +227,47 @@
             if (event.target === document.getElementById('feedback-modal')) {
                 document.getElementById('feedback-modal').style.display = 'none';
             }
+        });
+
+        // Обработка отправки формы через FormCarry
+        document.getElementById('feedback-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Предотвращаем стандартную отправку
+            
+            // Показываем пользователю, что форма отправляется
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Отправка...';
+            submitButton.disabled = true;
+            
+            // Собираем данные формы
+            const formData = new FormData(this);
+            
+            // Отправляем данные через Fetch API
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Если успешно, закрываем модальное окно и показываем сообщение
+                    document.getElementById('feedback-modal').style.display = 'none';
+                    alert('Ваша заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
+                    this.reset(); // Очищаем форму
+                } else {
+                    throw new Error('Ошибка сети');
+                }
+            })
+            .catch(error => {
+                alert('Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.');
+                console.error('Form submission error:', error);
+            })
+            .finally(() => {
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+            });
         });
     </script>
 </body>
