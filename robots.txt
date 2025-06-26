@@ -1,5 +1,13 @@
-User-agent: *  
-Allow: /  
-Disallow: /private/  
-Disallow: /admin/  
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+
+User-agent: Yandex
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+Host: https://rapad.ru
+Clean-param: utm_source&utm_medium&utm_campaign
+
 Sitemap: https://rapad.ru/sitemap.xml
